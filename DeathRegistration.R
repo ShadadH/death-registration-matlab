@@ -173,21 +173,6 @@ data$age_group_broad <- as.factor(data$age_group_broad)
 table(data$age_group_broad, useNA = "always")
 
 
-
-# Define broader relationship categories
-data$relation_to_deceased <- case_when(
-  data$c5a %in% c(1, 5, 7, 9) ~ "Immediate Family (Parents, Sibling, Spouse, Child)",
-  data$c5a %in% c(2, 3, 4, 6, 8, 10, 12) ~ "Extended Family (In-laws, Nephew/Niece, Grandparent, Uncle/Aunt)",
-  data$c5a == 11 ~ "Grandchild",
-  data$c5a == 77 ~ "Other",
-  TRUE ~ "Unknown"
-)
-
-data$relation_to_deceased <- as.factor(data$relation_to_deceased)
-
-# Check distribution
-table(data$relation_to_deceased, useNA = "always")
-
 # Create broader relationship categories from relation_to_deceased
 data <- data %>%
   mutate(
