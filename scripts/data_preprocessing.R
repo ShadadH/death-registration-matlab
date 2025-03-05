@@ -1,68 +1,38 @@
+# data_cleaning.R - Load and clean data
+source("setup.R")
 
-install.packages("gt")       # Required for gtsummary export
-install.packages("webshot2") # Needed for saving as image
-install.packages("usethis")
-
-# Load libraries
-library(gt)
-library(webshot2)
-library(haven)
-library(labelled)
-library(dplyr)
-library(ggplot2)
-library(gtsummary)
-
-setwd("~/death-registration-matlab")
-
-data <- read_dta("registered_deaths_matlab_complete.dta")
-View(data)
+# Read data using `here()` to avoid using setwd()
+data <- read_dta(here::here("data","registered_deaths_matlab_complete.dta"))
 
 # Extract and print variable labels
 var_labels <- var_label(data)
 print(var_labels)
 
-# Create the new binary variable
+# Create new binary variable
 data$registration_performer_interviewed <- ifelse(data$c5 == 2, 1, 0)
 
 # Convert categorical variables to factors
-data$d_sex <- factor(data$d_sex, levels = c(1, 2), labels = c("Male", "Female"))
-data$b3a <- factor(data$b3a, levels = c(1, 2, 3), labels = c("Primary", "Secondary", "Higher"))
-library(dplyr)
-
-# \create occupation_group
 data <- data %>%
   mutate(
-    # Convert b4 to a labeled factor 
+    d_sex = factor(d_sex, levels = c(1, 2), labels = c("Male", "Female")),
+    b3a = factor(b3a, levels = c(1, 2, 3), labels = c("Primary", "Secondary", "Higher")),
+    
+    # Occupation category
     b4 = factor(b4, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 77, 89),
-                labels = c("Farmer", "Fisherman", "Rickshaw/Van/Auto driver", "Shopkeeper", "Teacher", 
-                           "Medicine Seller", "Grocers", "Dai", "Community Health Worker", "Maid", 
-                           "Garment Worker", "Student", "Govt. Employee", "Private Employee", 
+                labels = c("Farmer", "Fisherman", "Rickshaw/Van/Auto driver", "Shopkeeper", 
+                           "Teacher", "Medicine Seller", "Grocers", "Dai", "Community Health Worker", 
+                           "Maid", "Garment Worker", "Student", "Govt. Employee", "Private Employee", 
                            "Disabled (physical/mental)", "Business", "Other", "Refused to Answer")),
     
-    # Define broader occupation categories
     occupation_group = case_when(
       b4 %in% c("Farmer", "Fisherman", "Shopkeeper", "Business", "Grocers", "Medicine Seller") ~ "Self-Employed",
       b4 %in% c("Teacher", "Govt. Employee", "Private Employee") ~ "Formal Employment",
-      b4 == "Student" ~ "Student",  # Keep "Student" as its own category
+      b4 == "Student" ~ "Student",
       b4 %in% c("Maid", "Community Health Worker", "Dai") ~ "Domestic & Health Workers",
       b4 %in% c("Disabled (physical/mental)", "Other", "Refused to Answer") ~ "Other or Unknown",
-      TRUE ~ "Unknown"  # Catch-all for any missing/unexpected values
+      TRUE ~ "Unknown"
     )
   )
-
-# Convert occupation_group to a factor for proper formatting
-data$occupation_group <- as.factor(data$occupation_group)
-
-
-# Convert to factor for better formatting in tables
-data$occupation_group <- as.factor(data$occupation_group)
-data$registration_performer_interviewed <- factor(data$registration_performer_interviewed, 
-                                                  levels = c(0, 1), 
-                                                  labels = c("Yes", "No"))
-
-var_label(data$registration_performer_interviewed) <- "Was the Registration Performer Interviewed During Initial Interview?"
-
-
 
 # Assign characteristics based on who registered the death
 data$registrar_sex <- ifelse(data$c5 == 1, data$a1, data$p3)  
@@ -100,50 +70,7 @@ data$staff_behavior <- factor(data$staff_behavior,
 # Convert '88' in registration visits to NA
 data$registration_visits <- ifelse(data$registration_visits == 88, NA, data$registration_visits)
 
-# Boxplot for number of visits vs. staff behavior (excluding 88)
-ggplot(data, aes(x = staff_behavior, y = registration_visits)) +
-  geom_boxplot(fill = "lightblue") +
-  labs(title = "Effect of Registration Visits on Staff Behavior",
-       x = "Staff Behavior",
-       y = "Number of Visits") +
-  theme_minimal()
-
-
-data$registrar_status <- case_when(
-  (data$c5 == 1) | (data$c5 == 2 & !is.na(data$p3)) ~ "Registrar Was Found",
-  data$c5 == 2 & is.na(data$p3) ~ "Registrar Not Found"
-)
-
-
-
-# Generate summary table comparing registrar status
-table_summary <- data %>%
-  select(d_sex, d_age5, occupation_group, registrar_status, b3a) %>%
-  tbl_summary(
-    by = registrar_status,  # Compare "Registrar Was Found" vs "Registrar Not Found"
-    statistic = list(
-      all_categorical() ~ "{n} ({p}%)"
-    ),
-    missing = "no",
-    label = list(
-      d_sex ~ "Sex of Deceased",
-      b3a ~ "Education of Deceased",
-      d_age5 ~ "Age Group of Deceased",
-      occupation_group ~ "Occupation Group"
-    )
-  ) %>%
-  add_p()  # Adds p-values for statistical comparison
-
-# Print the table
-table_summary
-
-gt_tbl <- as_gt(table_summary)
-
-# Save as an image
-gtsave(gt_tbl, file = "gtsummary_table.png")
-
 #Relation to Deceased
-
 data$relation_to_deceased <- case_when(
   data$c5 == 1 ~ as.character(data$b1),  # If informant registered, use B1
   data$c5 == 2 ~ as.character(data$p6),  # If different registrant, use P6
@@ -152,10 +79,6 @@ data$relation_to_deceased <- case_when(
 
 # Convert to factor
 data$relation_to_deceased <- as.factor(data$relation_to_deceased)
-
-# Check if it worked
-table(data$relation_to_deceased, useNA = "always")
-
 
 # Define age groups
 data$age_group_broad <- case_when(
@@ -168,10 +91,6 @@ data$age_group_broad <- case_when(
 
 # Convert to factor
 data$age_group_broad <- as.factor(data$age_group_broad)
-
-# Check distribution
-table(data$age_group_broad, useNA = "always")
-
 
 # Create broader relationship categories from relation_to_deceased
 data <- data %>%
@@ -190,27 +109,5 @@ data <- data %>%
 # Convert to factor for better formatting
 data$relation_group <- as.factor(data$relation_group)
 
-# Check the distribution
-table(data$relation_group, useNA = "always")
-
-#Plots
-
-ggplot(data, aes(y = age_group_broad, fill = relation_group)) +
-  geom_bar(position = "fill") +  # Stacked proportion bars
-  labs(
-    title = "Distribution of Relationship to Deceased by Age Group",
-    y = "Age Group of Deceased",
-    x = "Proportion",
-    fill = "Relationship Type"
-  ) +
-  theme_minimal() +
-  facet_wrap(~ d_sex)  # Separate plots by gender
-
-# Cross Tabulation
-table_c5a_p6 <- table(data$c5a, data$p6, useNA = "always")
-
-# Print the table, the resulting matrix should tell us about discrepancies
-table_c5a_p6
-
-
-
+# Save cleaned dataset
+saveRDS(data, file = here::here("data", "cleaned_data.rds"))
