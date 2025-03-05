@@ -1,4 +1,5 @@
 # summary_table.R - Generate a summary table of registrar status
+# Run data_preprocessing.R before this script with source(data_preprocessing.R)
 source("setup.R")
 
 # Load cleaned data
