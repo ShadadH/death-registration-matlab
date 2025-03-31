@@ -4,16 +4,16 @@
 source("setup.R")
 
 # Load cleaned data
-data <- readRDS(here::here("data", "cleaned_data.rds"))
+data_bd <- readRDS(here::here("data", "cleaned_data.rds"))
 
 # Filter out unknown relationships
-data_filtered <- data %>%
+data_filtered_bd <- data_bd %>%
   filter(relation_group != "Unknown")
 
-data_filtered$relation_group <- droplevels(data_filtered$relation_group)
+data_filtered_bd$relation_group <- droplevels(data_filtered_bd$relation_group)
 
 # Relationship Mosaic Plot
-ggplot(data_filtered) +  
+mosiac_bd <- ggplot(data_filtered_bd) +  
   geom_mosaic(aes(weight = 1, x = product(age_group_broad), fill = relation_group),
               offset = 0) +  
   scale_y_continuous(
@@ -21,7 +21,7 @@ ggplot(data_filtered) +
     labels = c("0%", "25%", "50%", "75%", "100%")
   ) +
   labs(
-    title = "Relationship Between Deceased and Registrar by Age Group",
+    title = "Bangladesh",
     x = "\nAge Group of Deceased",
     y = "Proportion (%)",
     fill = "Relationship Type"

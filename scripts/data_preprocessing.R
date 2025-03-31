@@ -1,7 +1,7 @@
 # data_cleaning.R - Load and clean data
 source("setup.R")
 
-# Read data using `here()` to avoid using setwd()
+# Read data using `here()` 
 data <- read_dta(here::here("data","registered_deaths_matlab_complete.dta"))
 
 # Extract and print variable labels
