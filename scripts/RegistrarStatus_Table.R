@@ -1,36 +1,48 @@
-# summary_table.R - Generate a summary table of registrar status
-# Run data_preprocessing.R before this script with source(data_preprocessing.R)
+# registrar_status_summary.R — Summary Table by Registrar Status ----------
+
 source("setup.R")
 
-# Load cleaned data
-data <- readRDS(here::here("data", "cleaned_data.rds"))
+# Load Cleaned Data ------------------------------------------------------
 
-# Convert occupation_group to factor
-data$occupation_group <- as.factor(data$occupation_group)
+data <- readRDS(here::here("data", "cleaned_data_bangladesh.rds"))
 
-data$registrar_status <- case_when(
-  (data$c5 == 1) | (data$c5 == 2 & !is.na(data$p3)) ~ "Registrar Was Found",
-  data$c5 == 2 & is.na(data$p3) ~ "Registrar Not Found"
-)
+# Format Variables -------------------------------------------------------
 
-# Generate summary table
+data <- data %>%
+  mutate(
+    occupation_group = as.factor(occupation_group),
+    
+    registrar_status = case_when(
+      c5 == 1 | (c5 == 2 & !is.na(p3)) ~ "Registrar Was Found",
+      c5 == 2 & is.na(p3) ~ "Registrar Not Found",
+      TRUE ~ NA_character_
+    )
+  )
+
+# Generate Summary Table -------------------------------------------------
+
 table_summary <- data %>%
   select(d_sex, d_age5, occupation_group, registrar_status, b3a) %>%
   tbl_summary(
-    by = registrar_status,  
+    by = registrar_status,
     statistic = list(all_categorical() ~ "{n} ({p}%)"),
     missing = "no",
     label = list(
       d_sex ~ "Sex of Deceased",
-      b3a ~ "Education of Deceased",
       d_age5 ~ "Age Group of Deceased",
+      b3a ~ "Education of Deceased",
       occupation_group ~ "Occupation Group"
     )
   ) %>%
-  add_p()  
+  add_p()  # Add p-values for group comparisons
 
-print(table_summary)
+# Output Table -----------------------------------------------------------
 
-# Save as an image
 gt_tbl <- as_gt(table_summary)
-gtsave(gt_tbl, file = here::here("outputs", "RegistrarStatus_Table.png"))
+
+# Save Table as PNG ------------------------------------------------------
+
+gtsave(
+  gt_tbl,
+  filename = here::here("outputs", "RegistrarStatus_Table_Bangladesh.png")
+)

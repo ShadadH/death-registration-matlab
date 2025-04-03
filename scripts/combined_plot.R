@@ -1,16 +1,29 @@
+# Load Dependencies -------------------------------------------------------
+
 source("setup.R")
+source("scripts/relation_plot_bangladesh.R")
+source("scripts/relation_plot_india.R")
+source("scripts/relation_plot_guinea.R")
 
-final_plot <- (mosiac_bd) / 
-  (mosiac_ind) / 
-  (mosiac_gb)
 
-final_plot <- final_plot + plot_annotation(title = "Relationship Between Deceased and Registrant by Age Group")
+# Combine Country Plots --------------------------------------------------
+
+final_plot <- (mosaic_bd) /
+  (mosaic_ind) /
+  (mosaic_gb) +
+  plot_annotation(title = "Relationship Between Deceased and Registrant by Age Group")
+
+# Display Plot -----------------------------------------------------------
 
 final_plot
 
-ggsave(here::here("outputs", "combined_plot.png"), 
-       plot = final_plot, 
-       width = 8, 
-       height = 16, 
-       units = "in", 
-       dpi = 300)
+# Save Plot --------------------------------------------------------------
+
+ggsave(
+  filename = here::here("outputs", "combined_plot.png"),
+  plot = final_plot,
+  width = 8,
+  height = 16,
+  units = "in",
+  dpi = 300
+)

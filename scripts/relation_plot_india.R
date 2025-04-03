@@ -1,18 +1,24 @@
+# Load Dependencies -------------------------------------------------------
+
 source("setup.R")
 
-# Load cleaned data
+# Load Data ---------------------------------------------------------------
+
 data_ind <- readRDS(here::here("data", "cleaned_data_india.rds"))
 
-# Filter out unknown relationships
+# Filter Data -------------------------------------------------------------
+
 data_filtered_ind <- data_ind %>%
-  filter(relation_group != "Unknown")
+  filter(relation_group != "Unknown") %>%
+  mutate(relation_group = droplevels(relation_group))
 
-data_filtered_ind$relation_group <- droplevels(data_filtered_ind$relation_group)
+# Create Mosaic Plot ------------------------------------------------------
 
-# Relationship Mosaic Plot
-mosiac_ind <- ggplot(data_filtered_ind) +  
-  geom_mosaic(aes(weight = 1, x = product(age_group_broad), fill = relation_group),
-              offset = 0) +  
+mosaic_ind <- ggplot(data_filtered_ind) +
+  geom_mosaic(
+    aes(weight = 1, x = product(age_group_broad), fill = relation_group),
+    offset = 0
+  ) +
   scale_y_continuous(
     breaks = seq(0, 1, by = 0.25),
     labels = c("0%", "25%", "50%", "75%", "100%")
@@ -32,5 +38,4 @@ mosiac_ind <- ggplot(data_filtered_ind) +
     legend.text = element_text(size = 10),
     axis.text.x = element_text(angle = 90, hjust = 1, size = 8)
   ) +
-  facet_wrap(~ deceased_sex)
-
+  facet_wrap(~deceased_sex)
