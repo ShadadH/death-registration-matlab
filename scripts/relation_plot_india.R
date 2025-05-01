@@ -29,6 +29,7 @@ mosaic_ind <- ggplot(data_filtered_ind) +
     y = "Proportion (%)",
     fill = "Relationship Type"
   ) +
+  scale_fill_manual(values = relation_colors) +  
   theme_minimal() +
   theme(
     axis.text.y = element_text(size = 10),
@@ -39,3 +40,13 @@ mosaic_ind <- ggplot(data_filtered_ind) +
     axis.text.x = element_text(angle = 90, hjust = 1, size = 8)
   ) +
   facet_wrap(~deceased_sex)
+
+# Save Mosaic Plot -------------------------------------------------------
+
+ggsave(
+  filename = here::here("outputs", "relation_plot_ind.jpeg"),
+  plot = mosaic_ind,
+  width = 8,
+  height = 6,
+  dpi = 300
+)

@@ -103,8 +103,7 @@ data <- data %>%
 data <- data %>%
   mutate(
     age_group_broad = case_when(
-      d_age >= 15 & d_age <= 34 ~ "15-34 years",
-      d_age >= 35 & d_age <= 59 ~ "35-59 years",
+      d_age >= 15 & d_age <= 59 ~ "15-59 years",
       d_age >= 60 & d_age <= 79 ~ "60-79 years",
       d_age >= 80 ~ "80+ years",
       TRUE ~ "Unknown"
@@ -120,14 +119,14 @@ data <- data %>%
       relation_to_deceased == 9 ~ "Spouse",
       relation_to_deceased == 1 ~ "Parent",
       relation_to_deceased == 7 ~ "Sibling",
-      relation_to_deceased == 11 ~ "Grandchild",
-      relation_to_deceased %in% c(2, 3, 4, 5, 6, 8, 10, 12) ~ "Extended Family",
+      relation_to_deceased == 5 ~ "Child",
+      relation_to_deceased %in% c(2, 3, 4, 11, 6, 8, 10, 12) ~ "Extended Family",
       relation_to_deceased == 77 ~ "Other",
       TRUE ~ "Unknown"
     ),
-    relation_group = factor(relation_group)
+    relation_group = factor(relation_group,
+                            levels = c("Extended Family", "Other", "Parent", "Child", "Sibling", "Spouse", "Unknown"))
   )
-
 # Save Cleaned Data ------------------------------------------------------
 
 saveRDS(data, here::here("data", "cleaned_data_bangladesh.rds"))

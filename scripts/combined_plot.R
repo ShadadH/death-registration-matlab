@@ -9,7 +9,6 @@ source("scripts/relation_plot_guinea.R")
 # Combine Country Plots --------------------------------------------------
 
 final_plot <- (mosaic_bd) /
-  (mosaic_ind) /
   (mosaic_gb) +
   plot_annotation(title = "Relationship Between Deceased and Registrant by Age Group")
 

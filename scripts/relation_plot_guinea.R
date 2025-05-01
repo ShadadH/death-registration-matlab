@@ -10,7 +10,9 @@ data_gb <- readRDS(here::here("data", "cleaned_data_guinea.rds"))
 
 data_filtered_gb <- data_gb %>%
   filter(relation_group != "Unknown") %>%
-  mutate(relation_group = droplevels(relation_group))
+  droplevels()
+
+data_filtered_gb <- droplevels(data_filtered_gb)
 
 # Create Mosaic Plot ------------------------------------------------------
 
@@ -29,6 +31,7 @@ mosaic_gb <- ggplot(data_filtered_gb) +
     y = "Proportion (%)",
     fill = "Relationship Type"
   ) +
+  scale_fill_manual(values = relation_colors) +
   theme_minimal() +
   theme(
     axis.text.y = element_text(size = 10),
@@ -39,3 +42,7 @@ mosaic_gb <- ggplot(data_filtered_gb) +
     axis.text.x = element_text(angle = 90, hjust = 1, size = 8)
   ) +
   facet_wrap(~d_sex)
+
+
+
+

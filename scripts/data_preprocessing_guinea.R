@@ -23,8 +23,7 @@ data <- data %>%
 data <- data %>%
   mutate(
     age_group_broad = case_when(
-      ageatdeath >= 15 & ageatdeath <= 34 ~ "15-34 years",
-      ageatdeath >= 35 & ageatdeath <= 59 ~ "35-59 years",
+      ageatdeath >= 15 & ageatdeath <= 59 ~ "15-59 years",
       ageatdeath >= 60 & ageatdeath <= 79 ~ "60-79 years",
       ageatdeath >= 80 ~ "80+ years",
       TRUE ~ "Unknown"
@@ -38,15 +37,20 @@ data <- data %>%
   mutate(
     relation_to_deceased = coalesce(relationregdeceased, relationwdeaceased),
     relation_group = case_when(
-      relation_to_deceased == 9 ~ "Spouse",
-      relation_to_deceased == 1 ~ "Parent",
-      relation_to_deceased == 7 ~ "Sibling",
-      relation_to_deceased == 11 ~ "Grandchild",
-      relation_to_deceased %in% c(2, 3, 4, 5, 6, 8, 10, 12) ~ "Extended Family",
-      TRUE ~ "Unknown"
+      relation_to_deceased == 1 ~ "Spouse",               # WIFE/HUSBAND
+      relation_to_deceased == 2 ~ "Parent",               # PARENT
+      relation_to_deceased == 6 ~ "Child",                # SON/DAUGHTER
+      relation_to_deceased == 8 ~ "Sibling",              # BROTHER/SISTER
+      relation_to_deceased %in% c(5, 9, 11) ~ "Extended Family", # GRANDCHILD, GRANDPARENT, OTHER RELATIVE
+      relation_to_deceased == 10 ~ "Other",               # SOMEONE ELSE NOT RELATED
+      relation_to_deceased == 98 ~ "Unknown",             # DON'T KNOW
+      TRUE ~ "Unknown"                                    # All others (missing, etc.)
     ),
-    relation_group = factor(relation_group)
+    relation_group = factor(relation_group,
+                            levels = c("Extended Family", "Other", "Parent", "Child", "Sibling", "Spouse", "Unknown"))
   )
+
+
 
 # Save Cleaned Dataset ---------------------------------------------------
 

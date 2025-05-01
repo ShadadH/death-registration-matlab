@@ -30,6 +30,7 @@ mosaic_bd <- ggplot(data_filtered_bd) +
     y = "Proportion (%)",
     fill = "Relationship Type"
   ) +
+  scale_fill_manual(values = relation_colors) +  
   theme_minimal() +
   theme(
     axis.text.y = element_text(size = 10),
