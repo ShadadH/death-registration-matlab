@@ -63,6 +63,36 @@ death-registration-matlab/
 └── .Rhistory / .RData               # Auto-generated session files
 ```
 ---
+## ⚙️ How to Run
+
+### 1. Clone the repository
+
+Use Git to clone the project locally:
+
+```bash
+git clone https://github.com/YourUsername/death-registration-matlab.git
+cd death-registration-matlab
+```
+### 2. Run any Script
+
+Each script in this repository is fully self-contained and begins by sourcing `setup.R`, which loads libraries and sets up file paths.
+
+To reproduce any analysis or plot:
+
+```r
+source("scripts/<name_of_script>.R")
+
+```
+Examples: 
+
+```r
+source("scripts/relation_plot_bangladesh.R")
+source("scripts/RegistrarStatus_Table.R")
+```
+
+There is no required order — run any script independently to generate its corresponding output in the outputs/ folder.
+
+---
 
 ## 👥 Contributors
 
