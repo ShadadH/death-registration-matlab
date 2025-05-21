@@ -50,6 +50,9 @@ data <- data %>%
                             levels = c("Extended Family", "Other", "Parent", "Child", "Sibling", "Spouse", "Unknown"))
   )
 
+#Registrant Sex ----------------------------------------------------------
+
+data$registrant_sex <- ifelse(data$youreg == 1, data$resp_sex, NA)
 
 
 # Save Cleaned Dataset ---------------------------------------------------
