@@ -29,9 +29,14 @@ bd_plot <- data_bd %>%
 
 
 gb_plot <- data_gb %>%
-  filter(resp_sex %in% c(1, 2), !is.na(d_sex), !is.na(age_group_broad), !(age_group_broad=="Unknown")) %>%
+  filter(
+    registrant_sex %in% c(1, 2),                # Keep only known registrant sex
+    !is.na(d_sex), 
+    !is.na(age_group_broad), 
+    age_group_broad != "Unknown"
+  ) %>%
   group_by(d_sex, age_group_broad) %>%
-  summarise(pct_male = mean(resp_sex == 1) * 100, .groups = "drop") %>%
+  summarise(pct_male = mean(registrant_sex == 1) * 100, .groups = "drop") %>%
   ggplot(aes(x = age_group_broad, y = pct_male, fill = d_sex)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_hline(yintercept = 50, linetype = "dashed", color = "red") +
@@ -43,6 +48,7 @@ gb_plot <- data_gb %>%
   ) +
   ylim(0, 100) +
   theme_minimal()
+
 
 ind_plot <- data_ind %>%
   filter(registrant_sex_code %in% c(1, 2), !is.na(deceased_sex), !is.na(age_group_broad), !(age_group_broad=="Unknown")) %>%
