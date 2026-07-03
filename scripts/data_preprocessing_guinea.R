@@ -23,12 +23,14 @@ data <- data %>%
 data <- data %>%
   mutate(
     age_group_broad = case_when(
-      ageatdeath >= 15 & ageatdeath <= 59 ~ "15-59 years",
+      ageatdeath >= 15 & ageatdeath <= 29 ~ "15-29 years",
+      ageatdeath >= 30 & ageatdeath <= 59 ~ "30-59 years",
       ageatdeath >= 60 & ageatdeath <= 79 ~ "60-79 years",
       ageatdeath >= 80 ~ "80+ years",
       TRUE ~ "Unknown"
     ),
-    age_group_broad = factor(age_group_broad)
+    age_group_broad = factor(age_group_broad,
+                              levels = c("15-29 years", "30-59 years", "60-79 years", "80+ years", "Unknown"))
   )
 
 # Determine Relationship to Deceased -------------------------------------

@@ -16,7 +16,7 @@ bd_plot <- data_bd %>%
   group_by(d_sex, age_group_broad) %>%
   summarise(pct_male = mean(registrar_sex == 1) * 100, .groups = "drop") %>%
   ggplot(aes(x = age_group_broad, y = pct_male, fill = d_sex)) +
-  geom_col(position = "dodge", width = 0.7) +
+  geom_col(position = "dodge", width = 0.7, color = "black") +
   geom_hline(yintercept = 50, linetype = "dashed", color = "red") +
   labs(
     title = "Bangladesh: % of Deaths Registered by Male",
@@ -38,7 +38,7 @@ gb_plot <- data_gb %>%
   group_by(d_sex, age_group_broad) %>%
   summarise(pct_male = mean(registrant_sex == 1) * 100, .groups = "drop") %>%
   ggplot(aes(x = age_group_broad, y = pct_male, fill = d_sex)) +
-  geom_col(position = "dodge", width = 0.7) +
+  geom_col(position = "dodge", width = 0.7, color = "black") +
   geom_hline(yintercept = 50, linetype = "dashed", color = "red") +
   labs(
     title = "Guinea-Bissau: % of Deaths Registered by Male",
@@ -55,7 +55,7 @@ ind_plot <- data_ind %>%
   group_by(deceased_sex, age_group_broad) %>%
   summarise(pct_male = mean(registrant_sex_code == 1) * 100, .groups = "drop") %>%
   ggplot(aes(x = age_group_broad, y = pct_male, fill = deceased_sex)) +
-  geom_col(position = "dodge", width = 0.7) +
+  geom_col(position = "dodge", width = 0.7, color = "black") +
   geom_hline(yintercept = 50, linetype = "dashed", color = "red") +
   labs(
     title = "India: % of Deaths Registered by Male",

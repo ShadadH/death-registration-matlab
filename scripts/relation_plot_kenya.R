@@ -3,24 +3,25 @@ source("setup.R")
 data_ke <- readRDS(here::here("data", "cleaned_data_kenya.rds"))
 
 ke_filtered <- data_ke |>
-  filter(age_group_broad != "Unknown") |>
+  filter(age_group_broad != "Unknown", relation_group != "Unknown") |>
   droplevels()
 
 # Mosaic Plot -------------------------------------------------------------
 mosaic_ke <- ggplot(ke_filtered) +
   ggmosaic::geom_mosaic(
-    aes(weight = 1, x = product(age_group_broad), fill = Who_regd_death),
-    offset = 0
+    aes(weight = 1, x = product(age_group_broad), fill = relation_group),
+    offset = 0,
+    color = "black"
   ) +
   scale_y_continuous(
     breaks = seq(0, 1, by = 0.25),
     labels = scales::percent_format(accuracy = 1)
   ) +
   labs(
-    title = "Kenya: Registrar of Death by Age Group",
-    x = "\nAge Group",
+    title = "Kenya",
+    x = "\nAge Group of Deceased",
     y = "Proportion (%)",
-    fill = "Who Registered Death"
+    fill = "Relationship Type"
   ) +
   scale_fill_manual(values = relation_colors) +
   theme_minimal() +
@@ -35,3 +36,13 @@ mosaic_ke <- ggplot(ke_filtered) +
   facet_wrap(~ Gender)
 
 print(mosaic_ke)
+
+# Save Mosaic Plot -------------------------------------------------------
+
+ggsave(
+  filename = here::here("outputs", "relation_plot_ke.jpeg"),
+  plot = mosaic_ke,
+  width = 8,
+  height = 6,
+  dpi = 300
+)

@@ -17,7 +17,8 @@ data_filtered_ind <- data_ind %>%
 mosaic_ind <- ggplot(data_filtered_ind) +
   geom_mosaic(
     aes(weight = 1, x = product(age_group_broad), fill = relation_group),
-    offset = 0
+    offset = 0,
+    color = "black"
   ) +
   scale_y_continuous(
     breaks = seq(0, 1, by = 0.25),

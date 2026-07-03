@@ -1,7 +1,7 @@
 #Install and load required packages ---------------------------------------------
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(gt, webshot2, haven, labelled, dplyr, ggplot2, gtsummary, here, ggmosaic, patchwork)
+pacman::p_load(gt, webshot2, haven, labelled, dplyr, ggplot2, gtsummary, here, ggmosaic, patchwork, readxl, stringr)
 
 relation_colors <- c(
   "Extended Family" = "#66C2A5",  # teal green

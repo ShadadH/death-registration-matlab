@@ -103,12 +103,14 @@ data <- data %>%
 data <- data %>%
   mutate(
     age_group_broad = case_when(
-      d_age >= 15 & d_age <= 59 ~ "15-59 years",
+      d_age >= 15 & d_age <= 29 ~ "15-29 years",
+      d_age >= 30 & d_age <= 59 ~ "30-59 years",
       d_age >= 60 & d_age <= 79 ~ "60-79 years",
       d_age >= 80 ~ "80+ years",
       TRUE ~ "Unknown"
     ),
-    age_group_broad = factor(age_group_broad)
+    age_group_broad = factor(age_group_broad,
+                              levels = c("15-29 years", "30-59 years", "60-79 years", "80+ years", "Unknown"))
   )
 
 # Categorize Relationship Types ------------------------------------------

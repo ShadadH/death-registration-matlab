@@ -19,7 +19,8 @@ data_filtered_gb <- droplevels(data_filtered_gb)
 mosaic_gb <- ggplot(data_filtered_gb) +
   geom_mosaic(
     aes(weight = 1, x = product(age_group_broad), fill = relation_group),
-    offset = 0
+    offset = 0,
+    color = "black"
   ) +
   scale_y_continuous(
     breaks = seq(0, 1, by = 0.25),
@@ -43,6 +44,12 @@ mosaic_gb <- ggplot(data_filtered_gb) +
   ) +
   facet_wrap(~d_sex)
 
+# Save Mosaic Plot -------------------------------------------------------
 
-
-
+ggsave(
+  filename = here::here("outputs", "relation_plot_gb.jpeg"),
+  plot = mosaic_gb,
+  width = 8,
+  height = 6,
+  dpi = 300
+)

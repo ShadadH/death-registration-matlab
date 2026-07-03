@@ -2,13 +2,13 @@
 source("setup.R")
 
 # Load cleaned data
-data <- readRDS(here::here("data", "cleaned_data_bangladesh.rds"))
+data <- readRDS(here::here("data", "cleaned_data_kenya.rds"))
 
 #Hypothesis 1
 
 # Split data by Gender
-male_data <- subset(data, d_sex == "Male")
-female_data <- subset(data, d_sex == "Female")
+male_data <- subset(data, Gender == "Male")
+female_data <- subset(data, Gender == "Female")
 
 # Cross-tabulate Relationship and AgeGroup for males
 table_male <- table(male_data$age_group_broad, male_data$relation_group)
@@ -36,7 +36,7 @@ Hyp1_Table <- hyp1_results %>%
   mutate(p_value = round(p_value, 5)) %>%
   gt() %>%
   tab_header(
-    title = "Hypothesis 1: Association Between Age Group and Type of Registrant",
+    title = "Kenya — Hypothesis 1: Association Between Age Group and Type of Registrant",
     subtitle = "Tested separately for each gender"
   ) %>%
   cols_label(
@@ -54,7 +54,7 @@ Hyp1_Table <- hyp1_results %>%
     )
   )
 
-gtsave(Hyp1_Table,filename = here::here("outputs", "Hypothesis 1 Table.png"))
+gtsave(Hyp1_Table, filename = here::here("outputs", "Hypothesis_1_Table_ke.png"))
 
 
 #Hypothesis 2
@@ -66,16 +66,16 @@ results_list <- list()
 
 for (group in age_groups) {
   subset_group <- subset(data, age_group_broad == group)
-  
+
   # Remove missing gender or relationship
-  subset_group <- subset_group[!is.na(subset_group$d_sex) & !is.na(subset_group$relation_group), ]
-  
-  tbl <- table(subset_group$d_sex, subset_group$relation_group)
+  subset_group <- subset_group[!is.na(subset_group$Gender) & !is.na(subset_group$relation_group), ]
+
+  tbl <- table(subset_group$Gender, subset_group$relation_group)
   tbl_clean <- tbl[rowSums(tbl) > 0, colSums(tbl) > 0, drop = FALSE]
-  
+
   if (nrow(tbl_clean) > 1 && ncol(tbl_clean) > 1) {
     test_result <- chisq.test(tbl_clean)
-    
+
     results_list[[group]] <- data.frame(
       Age_Group = group,
       Chi_Squared = round(test_result$statistic, 2),
@@ -88,12 +88,10 @@ for (group in age_groups) {
 
 results_df <- do.call(rbind, results_list)
 
-
-
 Hyp2_Table <- results_df %>%
   gt() %>%
   tab_header(
-    title = "Chi-squared Test: Relationship Type by Gender (within Age Group)",
+    title = "Kenya — Chi-squared Test: Relationship Type by Gender (within Age Group)",
     subtitle = "Significance of difference in registrant type between Male and Female for each age group"
   ) %>%
   fmt_number(columns = c(p_value), decimals = 4) %>%
@@ -105,6 +103,4 @@ Hyp2_Table <- results_df %>%
     )
   )
 
-gtsave(Hyp2_Table,filename = here::here("outputs", "Hypothesis 2 Table.png"))
-
-
+gtsave(Hyp2_Table, filename = here::here("outputs", "Hypothesis_2_Table_ke.png"))
